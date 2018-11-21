@@ -91,6 +91,7 @@ namespace Test
       foreach (DataGridViewTextBoxColumn col in dataGridView1.Columns)
       {
         col.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+        col.ReadOnly = true;
       }
 
       banList.ForEach(ban => dataGridView1.Columns[ban].Visible = false);
