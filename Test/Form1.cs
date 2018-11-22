@@ -14,13 +14,14 @@ namespace Test
 {
   public partial class Form1 : Form
   {
-    //private Database1Entities testDB;
-    private List<string> currentDeparts = new List<string>();
+    private List<string> currentDeparts;
+    private List<string> banList;
+
     public Form1()
     {
       InitializeComponent();
-
-      //testDB = new Database1Entities();
+      currentDeparts = new List<string>();
+      banList = new List<String> { "ID", "DocSeries", "DocNumber", "DepartmentID" };
       using (var _entity = new TestDBEntities())
       {
         foreach (var entityDepartment in _entity.Departments)
@@ -34,19 +35,7 @@ namespace Test
       
     }
 
-    private void addLevel(TreeNode node, HashSet<Department> depSet)
-    {
-      var count = 0;
-      foreach (var dep in depSet)
-      {
-        node.Nodes.Add(dep.Name);
-        if (dep.Department1.Count != 0)
-        {
-          addLevel(node.Nodes[count], dep.Department1 as HashSet<Department>);
-        }
-        count++;
-      }
-    }
+    
 
     private void fillDepartStructure()
     {
@@ -56,7 +45,7 @@ namespace Test
         if (depart.ParentDepartmentID == null)
         {
           treeView1.Nodes.Add(depart.Name);
-          addLevel(treeView1.Nodes[0], depart.Department1 as HashSet<Department>);
+          addSubNode(treeView1.Nodes[0], depart.Department1 as HashSet<Department>);
         }
       });
       }
@@ -65,8 +54,6 @@ namespace Test
 
     private void fillEmployes()
     {
-      var banList = new List<String> {"ID", "DocSeries", "DocNumber", "DepartmentID"};
-
       using (var _entity = new TestDBEntities())
       {
         List<EmployeeInfo> _employeeList = new List<EmployeeInfo>();
@@ -95,7 +82,6 @@ namespace Test
       }
 
       banList.ForEach(ban => dataGridView1.Columns[ban].Visible = false);
-
     }
 
     private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -139,17 +125,18 @@ namespace Test
       clearFieleds();
     }
 
-    private void clearFieleds()
+    private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
     {
-      firstNameTextBox.Text = "";
-      surNameTextBox.Text = "";
-      patronTextBox.Text = "";
-      dateTimePicker.Value = DateTime.Now;
-      docSeriesTextBox.Text = "";
-      docNumberTextBox.Text = "";
-      positionTextBox.Text = "";
-      departComboBox.SelectedIndex = -1;
+      currentDeparts.Clear();
+      currentDeparts.Add(getDepartID(treeView1.SelectedNode.Text));
+      if (treeView1.SelectedNode.Nodes.Count != 0)
+      {
+        addCurrentDepart(treeView1.SelectedNode.Nodes);
+      }
+      fillEmployes();
     }
+
+    #region Save
 
     private void saveButton_Click(object sender, EventArgs e)
     {
@@ -178,7 +165,7 @@ namespace Test
       }
     }
 
-    public bool SaveEmployee(Empoyee emp) 
+    public bool SaveEmployee(Empoyee emp)
     {
       bool result = false;
       using (var _entity = new TestDBEntities())
@@ -190,22 +177,131 @@ namespace Test
       return result;
     }
 
-    private bool checkFiled()
-    {
-      var result = true;
-      if (firstNameTextBox.Text.Length == 0 ||
-          surNameTextBox.Text.Length == 0 ||
-          positionTextBox.Text.Length == 0 ||
-          departComboBox.SelectedIndex == -1)
-      {
-        result = false;
-        ShowStatus(result, "Error");
-      }
+    #endregion
 
-      return result;
+    #region Update
+
+    private void updateButton_Click(object sender, EventArgs e)
+    {
+      using (var _entity = new TestDBEntities())
+      {
+        if (checkFiled())
+        {
+          var newEmployee = new Empoyee
+          {
+            ID = (decimal)dataGridView1.CurrentRow.Cells[0].Value,
+            FirstName = firstNameTextBox.Text,
+            SurName = surNameTextBox.Text,
+            Patronymic = patronTextBox.Text,
+            DateOfBirth = dateTimePicker.Value,
+            DocSeries = docSeriesTextBox.Text,
+            DocNumber = docNumberTextBox.Text,
+            Position = positionTextBox.Text,
+            DepartmentID = _entity.Departments
+              .First(x => x.Name == departComboBox.SelectedItem.ToString())
+              .ID
+          };
+
+          bool result = UpdateEmployee(newEmployee);
+          ShowStatus(result, "Update");
+        }
+      }
     }
 
-    public void ShowStatus(bool result, string Action)  
+    public bool UpdateEmployee(Empoyee emp)
+    {
+      using (var _entity = new TestDBEntities())
+      {
+        var _student = _entity.Empoyees.First(x => x.ID == emp.ID);
+        _student.FirstName = emp.FirstName;
+        _student.SurName = emp.SurName;
+        _student.Patronymic = emp.Patronymic;
+        _student.DateOfBirth = emp.DateOfBirth;
+        _student.DocSeries = emp.DocSeries;
+        _student.DocNumber = emp.DocNumber;
+        _student.Position = emp.Position;
+        _student.DepartmentID = emp.DepartmentID;
+        _entity.SaveChanges();
+        return true;
+      }
+    }
+
+    #endregion
+
+    #region Delete
+
+    private void deleteButton_Click(object sender, EventArgs e)
+    {
+      if (checkFiled() && dataGridView1.CurrentRow != null)
+      {
+        var id = dataGridView1.CurrentRow.Cells[0].Value;
+        bool result = DeleteStudentDetails((decimal)id);
+        ShowStatus(result, "Delete");
+      }
+    }
+
+    public bool DeleteStudentDetails(decimal id)
+    {
+      using (var _entity = new TestDBEntities())
+      {
+        var _employee = _entity.Empoyees.Where(x => x.ID == id).Select(x => x).FirstOrDefault();
+        _entity.Empoyees.Remove(_employee);
+        _entity.SaveChanges();
+        return true;
+      }
+    }
+
+    #endregion
+    
+    #region Extension Functions
+
+    private void addSubNode(TreeNode node, HashSet<Department> depSet)
+    {
+      var count = 0;
+      foreach (var dep in depSet)
+      {
+        node.Nodes.Add(dep.Name);
+        if (dep.Department1.Count != 0)
+        {
+          addSubNode(node.Nodes[count], dep.Department1 as HashSet<Department>);
+        }
+        count++;
+      }
+    }
+
+    private string getDepartID(string name)
+    {
+      using (var _entity = new TestDBEntities())
+      {
+        return _entity.Departments.First(x => x.Name == name).ID.ToString();
+      }
+    }
+
+    private void addCurrentDepart(TreeNodeCollection nodes)
+    {
+      for (int i = 0; i < nodes.Count; i++)
+      {
+        currentDeparts.Add(getDepartID(nodes[i].Text));
+        if (nodes[i].Nodes.Count != 0)
+        {
+          addCurrentDepart(nodes[i].Nodes);
+        }
+      }
+    }
+
+    private void clearFieleds()
+    {
+      firstNameTextBox.Text = "";
+      surNameTextBox.Text = "";
+      patronTextBox.Text = "";
+      dateTimePicker.Value = DateTime.Now;
+      docSeriesTextBox.Text = "";
+      docNumberTextBox.Text = "";
+      positionTextBox.Text = "";
+      departComboBox.SelectedIndex = -1;
+    }
+
+    public void ShowStatus(bool result, string Action)
     {
       if (result)
       {
@@ -230,106 +326,23 @@ namespace Test
       fillEmployes();
     }
 
-    private void deleteButton_Click(object sender, EventArgs e)
+    private bool checkFiled()
     {
-      if (checkFiled() && dataGridView1.CurrentRow != null)
+      var result = true;
+      if (firstNameTextBox.Text.Length == 0 ||
+          surNameTextBox.Text.Length == 0 ||
+          positionTextBox.Text.Length == 0 ||
+          departComboBox.SelectedIndex == -1)
       {
-        var id = dataGridView1.CurrentRow.Cells[0].Value;
-        bool result = DeleteStudentDetails((decimal)id);  
-        ShowStatus(result, "Delete");
+        result = false;
+        ShowStatus(result, "Error");
       }
-    }
 
-    public bool DeleteStudentDetails(decimal id) 
-    {
-      bool result = false;
-      using (var _entity = new TestDBEntities())
-      {
-        var _employee = _entity.Empoyees.Where(x => x.ID == id).Select(x => x).FirstOrDefault();
-        _entity.Empoyees.Remove(_employee);
-        _entity.SaveChanges();
-        result = true;
-      }
       return result;
     }
 
-    private void updateButton_Click(object sender, EventArgs e)
-    {
-      using (var _entity = new TestDBEntities())
-      {
-        if (checkFiled())
-        {
-          var newEmployee = new Empoyee
-          {
-            ID = (decimal) dataGridView1.CurrentRow.Cells[0].Value,
-            FirstName = firstNameTextBox.Text,
-            SurName = surNameTextBox.Text,
-            Patronymic = patronTextBox.Text,
-            DateOfBirth = dateTimePicker.Value,
-            DocSeries = docSeriesTextBox.Text,
-            DocNumber = docNumberTextBox.Text,
-            Position = positionTextBox.Text,
-            DepartmentID = _entity.Departments
-              .First(x => x.Name == departComboBox.SelectedItem.ToString())
-              .ID
-          };
+    #endregion
 
-          bool result = UpdateEmployee(newEmployee); 
-          ShowStatus(result, "Update");
-        }
-      }
-    }
-
-    public bool UpdateEmployee(Empoyee emp)
-    {
-      bool result = false;
-      using (var _entity = new TestDBEntities())
-      {
-        var _student = _entity.Empoyees.First(x => x.ID == emp.ID);
-        _student.FirstName = emp.FirstName;
-        _student.SurName = emp.SurName;
-        _student.Patronymic = emp.Patronymic;
-        _student.DateOfBirth = emp.DateOfBirth;
-        _student.DocSeries = emp.DocSeries;
-        _student.DocNumber = emp.DocNumber;
-        _student.Position = emp.Position;
-        _student.DepartmentID = emp.DepartmentID;
-        _entity.SaveChanges();
-        result = true;
-      }
-      return result;
-    }
-
-    private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
-    {
-      currentDeparts.Clear();
-      currentDeparts.Add(getDepartID(treeView1.SelectedNode.Text));
-      if (treeView1.SelectedNode.Nodes.Count != 0)
-      {
-        addCurrentDepart(treeView1.SelectedNode.Nodes);
-      }
-      fillEmployes();
-    }
-
-    private void addCurrentDepart(TreeNodeCollection nodes)
-    {
-      for (int i = 0; i < nodes.Count; i++)
-      {
-        currentDeparts.Add(getDepartID(nodes[i].Text));
-        if(nodes[i].Nodes.Count != 0)
-        {
-          addCurrentDepart(nodes[i].Nodes);
-        }
-      }
-    }
-
-    private string getDepartID(string name)
-    {
-      using (var _entity = new TestDBEntities())
-      {
-        return _entity.Departments.First(x => x.Name == name).ID.ToString();
-      }
-    }
   }
 
 }

@@ -32,6 +32,7 @@ namespace Test
     {
       this.tabControl = new System.Windows.Forms.TabControl();
       this.employTab = new System.Windows.Forms.TabPage();
+      this.treeView1 = new System.Windows.Forms.TreeView();
       this.clearButton = new System.Windows.Forms.Button();
       this.deleteButton = new System.Windows.Forms.Button();
       this.updateButton = new System.Windows.Forms.Button();
@@ -53,7 +54,6 @@ namespace Test
       this.label2 = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
       this.dataGridView1 = new System.Windows.Forms.DataGridView();
-      this.treeView1 = new System.Windows.Forms.TreeView();
       this.tabControl.SuspendLayout();
       this.employTab.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -100,6 +100,15 @@ namespace Test
       this.employTab.TabIndex = 1;
       this.employTab.Text = "Employes";
       this.employTab.UseVisualStyleBackColor = true;
+      // 
+      // treeView1
+      // 
+      this.treeView1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.treeView1.Location = new System.Drawing.Point(576, 6);
+      this.treeView1.Name = "treeView1";
+      this.treeView1.Size = new System.Drawing.Size(326, 209);
+      this.treeView1.TabIndex = 21;
+      this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
       // 
       // clearButton
       // 
@@ -304,14 +313,6 @@ namespace Test
       this.dataGridView1.TabIndex = 0;
       this.dataGridView1.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
       // 
-      // treeView1
-      // 
-      this.treeView1.Location = new System.Drawing.Point(576, 6);
-      this.treeView1.Name = "treeView1";
-      this.treeView1.Size = new System.Drawing.Size(326, 209);
-      this.treeView1.TabIndex = 21;
-      this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
-      // 
       // Form1
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -319,7 +320,7 @@ namespace Test
       this.ClientSize = new System.Drawing.Size(949, 557);
       this.Controls.Add(this.tabControl);
       this.Name = "Form1";
-      this.Text = "Form1";
+      this.Text = "Kostatest";
       this.tabControl.ResumeLayout(false);
       this.employTab.ResumeLayout(false);
       this.employTab.PerformLayout();
