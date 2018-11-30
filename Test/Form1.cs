@@ -15,12 +15,22 @@ namespace Test
   public partial class Form1 : Form
   {
     private List<string> currentDeparts;
+    private Dictionary<string, string> translateColumns;
     private List<string> banList;
 
     public Form1()
     {
       InitializeComponent();
       currentDeparts = new List<string>();
+      translateColumns = new Dictionary<string, string>
+      {
+        {"FirstName", "Имя"},
+        {"SurName", "Фамилия"},
+        {"Patronymic", "Отчество"},
+        {"DateOfBirth", "Дата рождения"},
+        {"Years", "Полных лет"},
+        {"Position", "Должность"},
+      };
       banList = new List<String> { "ID", "DocSeries", "DocNumber", "DepartmentID" };
       using (var _entity = new TestDBEntities())
       {
@@ -62,15 +72,24 @@ namespace Test
           .Select(x => new EmployeeInfo
         {
           ID = x.ID,
-          FirstName = x.FirstName,
-          SurName = x.SurName,
-          Patronymic = x.Patronymic,
-          DateOfBirth = x.DateOfBirth,
+          Имя = x.FirstName,
+          Фамилия = x.SurName,
+          Отчество = x.Patronymic,
+          ДатаРождения = x.DateOfBirth,
           DocSeries = x.DocSeries,
           DocNumber = x.DocNumber,
-          Position = x.Position,
+          Лет = 0,
+          Должность = x.Position,
           DepartmentID = x.DepartmentID
         }).ToList();
+
+        _employeeList.ForEach(x =>
+        {
+          DateTime nowDate = DateTime.Today;
+          int age = nowDate.Year - x.ДатаРождения.Year;
+          if (x.ДатаРождения > nowDate.AddYears(-age)) age--;
+          x.Лет = age;
+        });
 
         dataGridView1.DataSource = _employeeList;
       }
@@ -86,6 +105,8 @@ namespace Test
 
     private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
     {
+      updateButton.Enabled = true;
+      deleteButton.Enabled = true;
       using (var _entity = new TestDBEntities())
       {
         if (dataGridView1.Rows.Count > 0)
@@ -94,10 +115,10 @@ namespace Test
           surNameTextBox.Text = dataGridView1.CurrentRow.Cells[2].Value.ToString();
           patronTextBox.Text = dataGridView1.CurrentRow.Cells[3].FormattedValue.ToString();
           dateTimePicker.Value = DateTime.Parse(dataGridView1.CurrentRow.Cells[4].Value.ToString());
-          docSeriesTextBox.Text = dataGridView1.CurrentRow.Cells[5].Value.ToString();
-          docNumberTextBox.Text = dataGridView1.CurrentRow.Cells[6].Value.ToString();
-          positionTextBox.Text = dataGridView1.CurrentRow.Cells[7].Value.ToString();
-          var departID = dataGridView1.CurrentRow.Cells[8].Value.ToString();
+          docSeriesTextBox.Text = dataGridView1.CurrentRow.Cells[6].Value.ToString();
+          docNumberTextBox.Text = dataGridView1.CurrentRow.Cells[7].Value.ToString();
+          positionTextBox.Text = dataGridView1.CurrentRow.Cells[8].Value.ToString();
+          var departID = dataGridView1.CurrentRow.Cells[9].Value.ToString();
           departComboBox.SelectedItem = _entity.Departments
             .First(x => x.ID.ToString() == departID)
             .Name;
@@ -159,7 +180,7 @@ namespace Test
           };
 
           bool result = SaveEmployee(newEmployee);
-          ShowStatus(result, "Save");
+          ShowStatus(result, "Save", "");
 
         }
       }
@@ -203,7 +224,7 @@ namespace Test
           };
 
           bool result = UpdateEmployee(newEmployee);
-          ShowStatus(result, "Update");
+          ShowStatus(result, "Update", "");
         }
       }
     }
@@ -236,7 +257,7 @@ namespace Test
       {
         var id = dataGridView1.CurrentRow.Cells[0].Value;
         bool result = DeleteStudentDetails((decimal)id);
-        ShowStatus(result, "Delete");
+        ShowStatus(result, "Delete", "");
       }
     }
 
@@ -291,6 +312,8 @@ namespace Test
 
     private void clearFieleds()
     {
+      updateButton.Enabled = false;
+      deleteButton.Enabled = false;
       firstNameTextBox.Text = "";
       surNameTextBox.Text = "";
       patronTextBox.Text = "";
@@ -301,26 +324,26 @@ namespace Test
       departComboBox.SelectedIndex = -1;
     }
 
-    public void ShowStatus(bool result, string Action)
+    public void ShowStatus(bool result, string Action, string errorText)
     {
       if (result)
       {
         if (Action.ToUpper() == "SAVE")
         {
-          MessageBox.Show("Saved Successfully!..", "Save", MessageBoxButtons.OK, MessageBoxIcon.Information);
+          MessageBox.Show("Запись успешно сохранена", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         else if (Action.ToUpper() == "UPDATE")
         {
-          MessageBox.Show("Updated Successfully!..", "Update", MessageBoxButtons.OK, MessageBoxIcon.Information);
+          MessageBox.Show("Запись успешно обнавлена", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         else
         {
-          MessageBox.Show("Deleted Successfully!..", "Delete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+          MessageBox.Show("Запись успешно удалена", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
       }
       else
       {
-        MessageBox.Show("Something went wrong!. Please try again!..", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        MessageBox.Show(errorText, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
       clearFieleds();
       fillEmployes();
@@ -329,14 +352,33 @@ namespace Test
     private bool checkFiled()
     {
       var result = true;
-      if (firstNameTextBox.Text.Length == 0 ||
-          surNameTextBox.Text.Length == 0 ||
-          positionTextBox.Text.Length == 0 ||
-          departComboBox.SelectedIndex == -1)
+      if (firstNameTextBox.Text.Length == 0)
       {
         result = false;
-        ShowStatus(result, "Error");
+        ShowStatus(result, "Error", "Не заполнено обязательное поле \"Имя\"");
+        return result;
       }
+      if (surNameTextBox.Text.Length == 0)
+      {
+        result = false;
+        ShowStatus(result, "Error", "Не заполнено обязательное поле \"Фамилия\"");
+        return result;
+      }
+      if (positionTextBox.Text.Length == 0)
+      {
+        result = false;
+        ShowStatus(result, "Error", "Не заполнено обязательное поле \"Должность\"");
+        return result;
+      }
+      if (departComboBox.SelectedIndex == -1)
+      {
+        result = false;
+        ShowStatus(result, "Error", "Не заполнено обязательное поле \"Отдел\"");
+        return result;
+      }
+      
+        
+      
 
       return result;
     }

@@ -98,7 +98,7 @@ namespace Test
       this.employTab.Padding = new System.Windows.Forms.Padding(3);
       this.employTab.Size = new System.Drawing.Size(941, 531);
       this.employTab.TabIndex = 1;
-      this.employTab.Text = "Employes";
+      this.employTab.Text = "Работники";
       this.employTab.UseVisualStyleBackColor = true;
       // 
       // treeView1
@@ -113,44 +113,46 @@ namespace Test
       // clearButton
       // 
       this.clearButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.clearButton.Location = new System.Drawing.Point(210, 221);
+      this.clearButton.Location = new System.Drawing.Point(196, 221);
       this.clearButton.Name = "clearButton";
-      this.clearButton.Size = new System.Drawing.Size(146, 23);
+      this.clearButton.Size = new System.Drawing.Size(187, 23);
       this.clearButton.TabIndex = 20;
-      this.clearButton.Text = "Clear fileds";
+      this.clearButton.Text = "Очистить поля ввода";
       this.clearButton.UseVisualStyleBackColor = true;
       this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
       // 
       // deleteButton
       // 
+      this.deleteButton.Enabled = false;
       this.deleteButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.deleteButton.Location = new System.Drawing.Point(467, 111);
+      this.deleteButton.Location = new System.Drawing.Point(452, 111);
       this.deleteButton.Name = "deleteButton";
-      this.deleteButton.Size = new System.Drawing.Size(75, 23);
+      this.deleteButton.Size = new System.Drawing.Size(103, 23);
       this.deleteButton.TabIndex = 19;
-      this.deleteButton.Text = "Delete";
+      this.deleteButton.Text = "Удалить";
       this.deleteButton.UseVisualStyleBackColor = true;
       this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
       // 
       // updateButton
       // 
+      this.updateButton.Enabled = false;
       this.updateButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.updateButton.Location = new System.Drawing.Point(467, 82);
+      this.updateButton.Location = new System.Drawing.Point(452, 82);
       this.updateButton.Name = "updateButton";
-      this.updateButton.Size = new System.Drawing.Size(75, 23);
+      this.updateButton.Size = new System.Drawing.Size(103, 23);
       this.updateButton.TabIndex = 18;
-      this.updateButton.Text = "Update";
+      this.updateButton.Text = "Обновить";
       this.updateButton.UseVisualStyleBackColor = true;
       this.updateButton.Click += new System.EventHandler(this.updateButton_Click);
       // 
       // saveButton
       // 
       this.saveButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.saveButton.Location = new System.Drawing.Point(467, 53);
+      this.saveButton.Location = new System.Drawing.Point(452, 53);
       this.saveButton.Name = "saveButton";
-      this.saveButton.Size = new System.Drawing.Size(75, 23);
+      this.saveButton.Size = new System.Drawing.Size(103, 23);
       this.saveButton.TabIndex = 17;
-      this.saveButton.Text = "Save";
+      this.saveButton.Text = "Сохранить";
       this.saveButton.UseVisualStyleBackColor = true;
       this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
       // 
@@ -224,41 +226,41 @@ namespace Test
       // 
       this.label8.AutoSize = true;
       this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label8.Location = new System.Drawing.Point(3, 193);
+      this.label8.Location = new System.Drawing.Point(5, 197);
       this.label8.Name = "label8";
-      this.label8.Size = new System.Drawing.Size(102, 18);
+      this.label8.Size = new System.Drawing.Size(65, 18);
       this.label8.TabIndex = 8;
-      this.label8.Text = "Department*";
+      this.label8.Text = "Отдел*";
       // 
       // label7
       // 
       this.label7.AutoSize = true;
       this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label7.Location = new System.Drawing.Point(3, 166);
+      this.label7.Location = new System.Drawing.Point(3, 169);
       this.label7.Name = "label7";
-      this.label7.Size = new System.Drawing.Size(77, 18);
+      this.label7.Size = new System.Drawing.Size(105, 18);
       this.label7.TabIndex = 7;
-      this.label7.Text = "Position*";
+      this.label7.Text = "Должность*";
       // 
       // label6
       // 
       this.label6.AutoSize = true;
       this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label6.Location = new System.Drawing.Point(3, 138);
+      this.label6.Location = new System.Drawing.Point(3, 141);
       this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(103, 18);
+      this.label6.Size = new System.Drawing.Size(137, 18);
       this.label6.TabIndex = 6;
-      this.label6.Text = "Doc Number";
+      this.label6.Text = "Номер паспорта";
       // 
       // label5
       // 
       this.label5.AutoSize = true;
       this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label5.Location = new System.Drawing.Point(3, 115);
+      this.label5.Location = new System.Drawing.Point(3, 116);
       this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(92, 18);
+      this.label5.Size = new System.Drawing.Size(133, 18);
       this.label5.TabIndex = 5;
-      this.label5.Text = "Doc Series";
+      this.label5.Text = "Серия паспорта";
       // 
       // label4
       // 
@@ -266,19 +268,19 @@ namespace Test
       this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.label4.Location = new System.Drawing.Point(3, 87);
       this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(110, 18);
+      this.label4.Size = new System.Drawing.Size(136, 18);
       this.label4.TabIndex = 4;
-      this.label4.Text = "Date of Birth*";
+      this.label4.Text = "Дата рождения*";
       // 
       // label3
       // 
       this.label3.AutoSize = true;
       this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label3.Location = new System.Drawing.Point(3, 57);
+      this.label3.Location = new System.Drawing.Point(3, 60);
       this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(93, 18);
+      this.label3.Size = new System.Drawing.Size(83, 18);
       this.label3.TabIndex = 3;
-      this.label3.Text = "Patronymic";
+      this.label3.Text = "Отчество";
       // 
       // label2
       // 
@@ -286,19 +288,19 @@ namespace Test
       this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.label2.Location = new System.Drawing.Point(3, 34);
       this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(96, 18);
+      this.label2.Size = new System.Drawing.Size(87, 18);
       this.label2.TabIndex = 2;
-      this.label2.Text = "Last Name*";
+      this.label2.Text = "Фамилия*";
       // 
       // label1
       // 
       this.label1.AutoSize = true;
       this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.label1.Location = new System.Drawing.Point(3, 5);
+      this.label1.Location = new System.Drawing.Point(5, 8);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(98, 18);
+      this.label1.Size = new System.Drawing.Size(48, 18);
       this.label1.TabIndex = 1;
-      this.label1.Text = "First Name*";
+      this.label1.Text = "Имя*";
       // 
       // dataGridView1
       // 
@@ -320,7 +322,7 @@ namespace Test
       this.ClientSize = new System.Drawing.Size(949, 557);
       this.Controls.Add(this.tabControl);
       this.Name = "Form1";
-      this.Text = "Kostatest";
+      this.Text = "КОСТА";
       this.tabControl.ResumeLayout(false);
       this.employTab.ResumeLayout(false);
       this.employTab.PerformLayout();
